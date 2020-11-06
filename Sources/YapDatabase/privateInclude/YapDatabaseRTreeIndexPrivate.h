@@ -1,16 +1,15 @@
-#import "YapDatabase.h"
+#import "YapDatabaseCore.h"
 #import "YapDatabaseConnection.h"
 #import "YapDatabaseTransaction.h"
 
-#import "YapDatabaseSecondaryIndex.h"
-#import "YapDatabaseSecondaryIndexSetup.h"
-#import "YapDatabaseSecondaryIndexHandler.h"
-#import "YapDatabaseSecondaryIndexConnection.h"
-#import "YapDatabaseSecondaryIndexTransaction.h"
+#import "YapDatabaseRTreeIndex.h"
+#import "YapDatabaseRTreeIndexSetup.h"
+#import "YapDatabaseRTreeIndexHandler.h"
+#import "YapDatabaseRTreeIndexConnection.h"
+#import "YapDatabaseRTreeIndexTransaction.h"
 
 #import "YapCache.h"
 #import "YapMutationStack.h"
-#import "YapDatabaseStatement.h"
 
 #ifdef SQLITE_HAS_CODEC
   #import <SQLCipher/sqlite3.h>
@@ -23,18 +22,18 @@
  * If there is a major re-write to this class, then the version number will be incremented,
  * and the class can automatically rebuild the table as needed.
  */
-#define YAP_DATABASE_SECONDARY_INDEX_CLASS_VERSION 1
+#define YAP_DATABASE_RTREE_INDEX_CLASS_VERSION 1
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface YapDatabaseSecondaryIndexHandler () {
+@interface YapDatabaseRTreeIndexHandler () {
 @public
 	
-	YapDatabaseSecondaryIndexBlock block;
-	YapDatabaseBlockType           blockType;
-	YapDatabaseBlockInvoke         blockInvokeOptions;
+	YapDatabaseRTreeIndexBlock block;
+	YapDatabaseBlockType       blockType;
+	YapDatabaseBlockInvoke     blockInvokeOptions;
 }
 
 @end
@@ -43,15 +42,14 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface YapDatabaseSecondaryIndexSetup ()
+@interface YapDatabaseRTreeIndexSetup ()
 
 /**
  * This method compares its setup to a current table structure.
- * 
+ *
  * @param columns
- *   
  *   Dictionary of column names and affinity.
- * 
+ *
  * @see YapDatabase columnNamesAndAffinityForTable:using:
  */
 - (BOOL)matchesExistingColumnNamesAndAffinity:(NSDictionary *)columns;
@@ -62,16 +60,15 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface YapDatabaseSecondaryIndex () {
+@interface YapDatabaseRTreeIndex () {
 @public
-	
-	YapDatabaseSecondaryIndexSetup *setup;
-	YapDatabaseSecondaryIndexOptions *options;
-	
-	YapDatabaseSecondaryIndexHandler *handler;
-	
+
+	YapDatabaseRTreeIndexHandler *handler;
+	YapDatabaseRTreeIndexSetup *setup;
+	YapDatabaseRTreeIndexOptions *options;
+
 	NSString *versionTag;
-	
+
 	id columnNamesSharedKeySet;
 }
 
@@ -83,22 +80,21 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface YapDatabaseSecondaryIndexConnection () {
+@interface YapDatabaseRTreeIndexConnection () {
 @public
-	
-	__strong YapDatabaseSecondaryIndex *parent;
+
+	__strong YapDatabaseRTreeIndex *parent;
 	__unsafe_unretained YapDatabaseConnection *databaseConnection;
-	
+
 	NSMutableDictionary *blockDict;
-	
-	YapCache<NSString *, YapDatabaseStatement *> *queryCache;
+
+	YapCache *queryCache;
 	NSUInteger queryCacheLimit;
 	
 	YapMutationStack_Bool *mutationStack;
 }
 
-- (id)initWithParent:(YapDatabaseSecondaryIndex *)parent
-  databaseConnection:(YapDatabaseConnection *)databaseConnection;
+- (id)initWithParent:(YapDatabaseRTreeIndex *)parent databaseConnection:(YapDatabaseConnection *)databaseConnection;
 
 - (void)postCommitCleanup;
 - (void)postRollbackCleanup;
@@ -114,14 +110,14 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface YapDatabaseSecondaryIndexTransaction () {
+@interface YapDatabaseRTreeIndexTransaction () {
 @private
-	
-	__unsafe_unretained YapDatabaseSecondaryIndexConnection *parentConnection;
+
+	__unsafe_unretained YapDatabaseRTreeIndexConnection *parentConnection;
 	__unsafe_unretained YapDatabaseReadTransaction *databaseTransaction;
 }
 
-- (id)initWithParentConnection:(YapDatabaseSecondaryIndexConnection *)parentConnection
+- (id)initWithParentConnection:(YapDatabaseRTreeIndexConnection *)parentConnection
            databaseTransaction:(YapDatabaseReadTransaction *)databaseTransaction;
 
 @end

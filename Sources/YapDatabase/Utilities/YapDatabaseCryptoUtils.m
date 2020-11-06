@@ -3,7 +3,7 @@
 //
 
 #import "YapDatabaseCryptoUtils.h"
-#import "YapDatabase.h"
+#import "YapDatabaseCore.h"
 #import "YapDatabaseLogging.h"
 
 #ifdef SQLITE_HAS_CODEC

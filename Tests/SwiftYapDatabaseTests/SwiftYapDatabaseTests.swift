@@ -1,5 +1,5 @@
 import XCTest
-@testable import ObjCYapDatabase
+@testable import YapDatabase
 @testable import SwiftYapDatabase
 
 final class SwiftYapDatabaseTests: XCTestCase {

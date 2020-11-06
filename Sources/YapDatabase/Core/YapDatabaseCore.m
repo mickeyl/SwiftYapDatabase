@@ -1,4 +1,4 @@
-#import "YapDatabase.h"
+#import "YapDatabaseCore.h"
 #import "YapDatabaseAtomic.h"
 #import "YapDatabasePrivate.h"
 #import "YapDatabaseExtensionPrivate.h"

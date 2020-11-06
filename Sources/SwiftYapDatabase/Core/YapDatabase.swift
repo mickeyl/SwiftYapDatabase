@@ -1,4 +1,4 @@
-import ObjCYapDatabase
+import YapDatabase
 
 extension YapDatabase {
 

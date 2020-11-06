@@ -7,8 +7,8 @@ let package = Package(
     name: "Swift-YapDatabase",
     products: [
         .library(
-            name: "ObjCYapDatabase",
-            targets: ["ObjCYapDatabase"]
+            name: "YapDatabase",
+            targets: ["YapDatabase"]
         ),
         .library(
             name: "SwiftYapDatabase",
@@ -23,7 +23,7 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
-            name: "ObjCYapDatabase",
+            name: "YapDatabase",
             dependencies: [],
             cSettings: [
                 .headerSearchPath("privateInclude")
@@ -31,7 +31,7 @@ let package = Package(
         ),
         .target(
             name: "SwiftYapDatabase",
-            dependencies: ["ObjCYapDatabase"]
+            dependencies: ["YapDatabase"]
         ),
         .testTarget(
             name: "SwiftYapDatabaseTests",
